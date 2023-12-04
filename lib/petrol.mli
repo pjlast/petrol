@@ -246,7 +246,7 @@ module Sqlite3 : sig
     val vl: ty:'a Type.t -> 'a -> 'a t
     (** [vl ~ty value] returns an expression that evaluates to the value [value] with type [ty]. *)
 
-    val vl_opt: ty:'a Type.t -> 'a -> 'a option t
+    val vl_opt: ty:'a Type.t -> 'a option -> 'a option t
     (** [vl_opt ~ty value] returns an expression that evaluates to the value [value option] with type [ty]. *)
 
     val i_stat : int -> int t
