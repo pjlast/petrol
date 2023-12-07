@@ -1205,3 +1205,25 @@ val collect_list :
   ('a list, [> Caqti_error.call_or_retrieve ]) result Lwt.t
 (** [collect_list db req] executes a SQL request [req] on the SQL
     database [db] and collects the results into a list.  *)
+
+val collect_list_2 :
+  (module Caqti_lwt.CONNECTION) ->
+  ('a, 'b) query ->
+  ('a list, [> Caqti_error.call_or_retrieve ]) result Lwt.t
+(** [collect_list db req] executes a SQL request [req] on the SQL
+    database [db] and collects the results into a list.  *)
+
+val exec_2 :
+  (module Caqti_lwt.CONNECTION) ->
+  (unit, 'a) query ->
+  (unit, [> Caqti_error.call_or_retrieve ]) result Lwt.t
+
+val find_2 :
+  (module Caqti_lwt.CONNECTION) ->
+  ('a, 'b) query ->
+  ('a, [> Caqti_error.call_or_retrieve ]) result Lwt.t
+
+val find_opt_2 :
+  (module Caqti_lwt.CONNECTION) ->
+  ('a, 'b) query ->
+  ('a option, [> Caqti_error.call_or_retrieve ]) result Lwt.t

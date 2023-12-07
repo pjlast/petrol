@@ -130,6 +130,23 @@ let collect_list : 'a . (module Caqti_lwt.CONNECTION) ->
   let data = Request.unwrap (inps,wrapp_value) in
   DB.collect_list req data
 
+let collect_list_2 db qry =
+    let req = Request.make_many qry in
+    collect_list db req
+
+let exec_2 db qry =
+    let req = Request.make_zero qry in
+    exec db req
+
+let find_2 db qry =
+    let req = Request.make_one qry in
+    find db req
+
+let find_opt_2 db qry =
+    let req = Request.make_zero_or_one qry in
+    find_opt db req
+
+
 module StaticSchema = struct
 
   type wrapped_table =
