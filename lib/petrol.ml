@@ -109,6 +109,9 @@ let exec : (module Caqti_lwt.CONNECTION) ->
   let data = Request.unwrap (inps,wrapp_value) in
   DB.exec req data
 
+let transact (module DB : Caqti_lwt.CONNECTION) fn =
+    DB.with_transaction fn
+
 let find : 'a . (module Caqti_lwt.CONNECTION) ->
   ('a,[< `One ]) Request.t -> ('a, [> Caqti_error.call_or_retrieve ]) result Lwt.t =
   fun (module DB: Caqti_lwt.CONNECTION) (type a) ((MkCaqti (inps,req),wrapp_value): (a,_) Request.t) ->

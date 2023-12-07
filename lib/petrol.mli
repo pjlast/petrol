@@ -1183,6 +1183,11 @@ val exec : (module Caqti_lwt.CONNECTION) -> (unit, [< `Zero ]) request ->
 (** [exec db req] executes a unit SQL request [req] on the SQL
     database [db].  *)
 
+val transact : (module Caqti_lwt.CONNECTION) -> (unit -> ('a, ([> Caqti_error.transact ] as 'b)) result Lwt.t) ->
+('a, 'b) result Lwt.t
+(** [transact db fn] executes the function [fn] inside a database transaction and
+    rolls the transaction back if [fn] does not return [Ok]. *)
+
 val find : (module Caqti_lwt.CONNECTION) -> ('a, [< `One ]) request ->
   ('a, [> Caqti_error.call_or_retrieve ]) result Lwt.t
 (** [find db req] executes a singleton SQL request [req] on the SQL
