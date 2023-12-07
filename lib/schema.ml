@@ -238,15 +238,6 @@ let table_foreign_key ?name ?on_update ?on_delete ~table ~columns local_columns
 let ty : 'a field -> 'a Type.t = function
   | _, ty, _ -> ty
 
-let result_all_unit : (unit, 'e) result list -> (unit, 'e) result =
- fun ls ->
-  let rec loop = function
-    | [] -> Ok ()
-    | Ok () :: t -> loop t
-    | Error err :: _ -> Error err
-  in
-  loop ls
-
 type 'a table =
   | [] : unit table
   | ( :: ) : ('a field * 'b table) -> ('a * 'b) table
@@ -299,48 +290,3 @@ let to_sql ~name table (constraints : 'a sql_constraint list) =
           constraints
   in
   Format.sprintf "CREATE TABLE IF NOT EXISTS %s (%s)" name acc
-
-type wrapped_table =
-  | MkTable :
-      int * string * 'a table * [ `Table ] constraint_ list
-      -> wrapped_table
-
-type t = (int, wrapped_table) Hashtbl.t
-
-let init () : t = Hashtbl.create 10
-
-let declare_table tables ?(constraints : _ list = []) ~name tbl =
-  List.iter ensure_table_constraint constraints;
-  let id = Hashtbl.length tables in
-  Hashtbl.add tables id (MkTable (id, name, tbl, constraints));
-  let rec to_table : 'a. string -> 'a table -> 'a Expr.expr_list =
-   fun name (type a) (table : a table) : a Expr.expr_list ->
-    match table with
-    | [] -> []
-    | (field_name, field_ty, _) :: rest ->
-        (Types.FIELD ((id, name), field_name, field_ty) : _ Expr.t)
-        :: to_table name rest
-  in
-  let table = to_table name tbl in
-  ((id, name), table)
-
-let initialise tables (module DB : Caqti_lwt.CONNECTION) =
-  let open Lwt_result.Syntax in
-  let table_defs =
-    Hashtbl.fold
-      (fun _key (MkTable (_, name, table, constraints)) acc ->
-        List.cons (to_sql ~name table constraints) acc)
-      tables
-      ([] : 'a list)
-  in
-  let* () =
-    Lwt_list.map_s
-      (fun table_def ->
-        let req =
-          Caqti_request.Infix.(Caqti_type.unit ->. Caqti_type.unit) table_def
-        in
-        DB.exec req ())
-      table_defs
-    |> Lwt.map result_all_unit
-  in
-  Lwt_result.return ()

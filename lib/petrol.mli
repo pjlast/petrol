@@ -681,40 +681,6 @@ module Postgres : sig
 end
 
 module Schema : sig
-  (** Provides a helper interface, primarily for prototyping/debugging, that
-      declares a static table without any versioning. *)
-
-  (** A global schema, primarily intended for testing.
-
-      See also {!VersionedSchema.t}, which is the recommended alternative,
-      especially if you expect the schema to change in the future.
-
-      {b Note} A schema [t] here represents a collection of table schemas but
-      doesn't have to be an exhaustive enumeration - i.e it is possible to have
-      multiple [t] valid for a given SQL database provided they refer to
-      disjoint collections of tables. *)
-  type t
-
-  (** [init version ~name] constructs a new schema. *)
-  val init : unit -> t
-
-  (** [declare_table t ?constraints ~name table_spec] declares a new table on
-      the schema [t] with the name [name].
-
-      [constraints] are a list of SQL constraints on the columns of the table. *)
-  val declare_table :
-    t ->
-    ?constraints:[ `Table ] Schema.constraint_ list ->
-    name:string ->
-    'a Schema.table ->
-    table_name * 'a Expr.expr_list
-
-  (** [initialise t conn] initialises the SQL schema on [conn]. *)
-  val initialise :
-    t ->
-    (module Caqti_lwt.CONNECTION) ->
-    (unit, [> Caqti_error.t ]) Lwt_result.t
-
   (** Provides an E-DSL for specifying SQL tables in OCaml. *)
 
   type conflict_clause = [ `ABORT | `FAIL | `IGNORE | `REPLACE | `ROLLBACK ]
@@ -1000,6 +966,42 @@ module Query : sig
     'c Expr.expr_list ->
     ('a, ([< `UPDATE | `INSERT | `DELETE ] as 'b)) t ->
     ('c, 'b) t
+end
+
+module StaticSchema : sig
+  (** Provides a helper interface, primarily for prototyping/debugging, that
+      declares a static table without any versioning. *)
+
+  (** A global schema, primarily intended for testing.
+
+      See also {!VersionedSchema.t}, which is the recommended alternative,
+      especially if you expect the schema to change in the future.
+
+      {b Note} A schema [t] here represents a collection of table schemas but
+      doesn't have to be an exhaustive enumeration - i.e it is possible to have
+      multiple [t] valid for a given SQL database provided they refer to
+      disjoint collections of tables. *)
+  type t
+
+  (** [init version ~name] constructs a new schema. *)
+  val init : unit -> t
+
+  (** [declare_table t ?constraints ~name table_spec] declares a new table on
+      the schema [t] with the name [name].
+
+      [constraints] are a list of SQL constraints on the columns of the table. *)
+  val declare_table :
+    t ->
+    ?constraints:[ `Table ] Schema.constraint_ list ->
+    name:string ->
+    'a Schema.table ->
+    table_name * 'a Expr.expr_list
+
+  (** [initialise t conn] initialises the SQL schema on [conn]. *)
+  val initialise :
+    t ->
+    (module Caqti_lwt.CONNECTION) ->
+    (unit, [> Caqti_error.t ]) Lwt_result.t
 end
 
 (** [exec db req] executes a unit SQL request [req] on the SQL database [db]. *)
