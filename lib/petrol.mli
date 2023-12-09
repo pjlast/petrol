@@ -894,8 +894,8 @@ module Query : sig
   val insert :
     into:table_name ->
     values:Expr.wrapped_assign list ->
-    returning:unit Types.expr_list ->
-    (unit, [> `INSERT ]) t
+    returning:'a Expr.expr_list ->
+    ('a, [> `INSERT ]) t
 
   (** [delete ~from] corresponds to the SQL [DELETE FROM {from}]. *)
   val delete : from:table_name -> (unit, [> `DELETE ]) t
