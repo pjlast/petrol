@@ -892,8 +892,9 @@ module Query : sig
   (** [insert ~table ~values] corresponds to the SQL
       [INSERT {values} INTO {table}]. *)
   val insert :
-    table:table_name ->
+    into:table_name ->
     values:Expr.wrapped_assign list ->
+    returning:unit Types.expr_list ->
     (unit, [> `INSERT ]) t
 
   (** [delete ~from] corresponds to the SQL [DELETE FROM {from}]. *)

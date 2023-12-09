@@ -68,15 +68,9 @@ let update ~table:table_name ~set =
   Types.UPDATE
     { table = table_name; on_err = None; where = None; set; returning = [] }
 
-let insert ~table:table_name ~values:set =
+let insert ~into:table_name ~values:set ~returning =
   Types.INSERT
-    {
-      table = table_name;
-      on_err = None;
-      on_conflict = None;
-      set;
-      returning = [];
-    }
+    { table = table_name; on_err = None; on_conflict = None; set; returning }
 
 let delete ~from:table_name =
   Types.DELETE { table = table_name; where = None; returning = [] }
