@@ -11,13 +11,14 @@
 
 (license LGPL-3.0-or-later)
 
-(homepage "https://github.com/gopiandcode/petrol")
-(bug_reports "https://github.com/gopiandcode/petrol/issues")
+(homepage "https://github.com/pjlast/petrol")
+(bug_reports "https://github.com/pjlast/petrol/issues")
 
 (package
  (name petrol)
  (synopsis "Petrol's an OCaml SQL API made to go FAST")
  (description "Petrol is an typed embedding of SQL into OCaml integrated with Caqti and support for versioning.")
+ (version 1.2.4)
  (depends
   (ocaml (>= 4.12))
   (dune (>= 3.3))
